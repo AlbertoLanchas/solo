@@ -1,3 +1,5 @@
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Drawer } from "expo-router/drawer";
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 // import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -45,10 +47,12 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : MyLightTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Drawer>
+          <Drawer.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Drawer.Screen name="+not-found" />
+        </Drawer>
+      </GestureHandlerRootView>
     </ThemeProvider>
   );
 }

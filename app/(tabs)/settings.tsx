@@ -1,37 +1,56 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  Image,
-  Switch,
-} from "react-native";
-import React, { createContext, useState, useContext, useEffect } from "react";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { StyleSheet, TouchableOpacity, Image, Switch } from "react-native";
+import { useEffect, useState } from "react";
+import { useColorScheme } from "nativewind";
+import { MyLightTheme } from "../../utilities/themeOptions";
+import { useTheme } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { Colors } from "@/constants/Colors";
-import { Appearance } from "react-native";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
 
 const Settings = () => {
-  const colorScheme = useColorScheme();
-  const color = colorScheme === "light" ? Colors.dark.text : Colors.light.text;
+  const { setColorScheme, colorScheme } = useColorScheme();
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  const toggleDarkMode = () => {
-    if (isDarkMode) {
-      Appearance.setColorScheme("light");
-    } else {
-      Appearance.setColorScheme("dark");
-    }
-    setIsDarkMode((previousState) => !previousState);
+  const toggleColorScheme = async (themeValue: "light" | "dark") => {
+    setIsDarkMode(themeValue === "dark");
+    setColorScheme(themeValue);
+    await AsyncStorage.setItem("theme", themeValue);
   };
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Settings</Text>
+  const toggleDarkMode = () => {
+    const newTheme = isDarkMode ? "light" : "dark";
+    toggleColorScheme(newTheme);
+  };
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Language</Text>
-        <View style={styles.containerFlags}>
+  useEffect(() => {
+    const getTheme = async () => {
+      try {
+        const themeValue = (await AsyncStorage.getItem("theme")) as
+          | "light"
+          | "dark";
+        if (themeValue) {
+          setIsDarkMode(themeValue === "dark");
+          setColorScheme(themeValue);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    getTheme();
+  }, []);
+
+  const { colors } = useTheme();
+  const color = colorScheme === "light" ? Colors.light.text : Colors.dark.text;
+
+  return (
+    <ThemedView style={styles.container}>
+      <ThemedText style={styles.title}>Settings</ThemedText>
+
+      <ThemedView style={styles.section}>
+        <ThemedText style={styles.sectionTitle}>Language</ThemedText>
+        <ThemedView style={styles.containerFlags}>
           <TouchableOpacity style={styles.button}>
             <Image
               source={require("@/assets/images/flags/english.png")}
@@ -50,13 +69,13 @@ const Settings = () => {
               style={styles.flagIcon}
             />
           </TouchableOpacity>
-        </View>
-      </View>
+        </ThemedView>
+      </ThemedView>
 
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: color }]}>
+      <ThemedView style={styles.section}>
+        <ThemedText style={[styles.sectionTitle]}>
           Dark Mode: {colorScheme}
-        </Text>
+        </ThemedText>
         <Switch
           trackColor={{ false: "#767577", true: "#81b0ff" }}
           thumbColor={isDarkMode ? "#f5dd4b" : "#f4f3f4"}
@@ -64,8 +83,8 @@ const Settings = () => {
           onValueChange={toggleDarkMode}
           value={isDarkMode}
         />
-      </View>
-    </View>
+      </ThemedView>
+    </ThemedView>
   );
 };
 
@@ -76,7 +95,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgb(51,51,51)",
     padding: 20,
   },
   title: {
