@@ -1,7 +1,7 @@
 import { StyleSheet, TouchableOpacity, Image, Switch } from "react-native";
 import { useEffect, useState } from "react";
 import { useColorScheme } from "nativewind";
-import { MyLightTheme } from "../../utilities/themeOptions";
+import { MyLightTheme } from "../utilities/themeOptions";
 import { useTheme } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 

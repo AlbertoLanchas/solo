@@ -8,18 +8,16 @@ import {
   Dimensions,
   Image,
 } from "react-native";
-import { styles } from "../theme";
-import { useNavigation } from "@react-navigation/native";
-import { image185 } from "../../api/moviedb";
-import SeeAll from "./seeAll";
+import { Link, router } from "expo-router";
+// import { styles } from "../theme";
+// import { image185 } from "../../api/moviedb";
+// import SeeAll from "./seeAll";
 
 var { width, height } = Dimensions.get("window");
 
 export default function MovieList({ characters, title, hideSeeAll }) {
-  const navigation = useNavigation();
-
   return (
-    <View style={{ marginBottom: 8 }}>
+    <View style={{ marginBottom: 8, backgroundColor: "transparent" }}>
       <View
         style={{
           marginHorizontal: 14,
@@ -40,11 +38,15 @@ export default function MovieList({ characters, title, hideSeeAll }) {
           {title}
         </Text>
         {!hideSeeAll && (
-          <TouchableOpacity
-            onPress={() => navigation.push("SeeAll", characters)}
+          <Link
+            href={{                 
+              pathname: 'seeAll',
+              params: { characters: JSON.stringify(characters) },
+            }}
+            asChild
           >
-            <Text style={[styles.text, { fontSize: 16 }]}>See All</Text>
-          </TouchableOpacity>
+            <Text style={{ color: "orange", fontSize: 16 }}>See All</Text>
+          </Link>
         )}
       </View>
       {/* movie row */}
@@ -56,7 +58,7 @@ export default function MovieList({ characters, title, hideSeeAll }) {
         {characters?.map((item, index) => (
           <TouchableWithoutFeedback
             key={index}
-            onPress={() => navigation.push("Person", item)}
+          // onPress={() => navigation.push("Person", item)}
           >
             <View
               style={{
@@ -64,9 +66,10 @@ export default function MovieList({ characters, title, hideSeeAll }) {
               }}
             >
               <Image
-                // source={require(item.cover_image_url)}c
-                // source={require("../../assets/characters/Baek Yoonho.jpg")}
-                source={{ uri: item.cover_image_url }}
+                source={(item.cover_image_url)}
+                imgName={item.name}
+                // source={require("@/assets/images/characters/Baek Yoonho.jpg")}
+                // source={{ uri: item.cover_image_url }}
                 style={{
                   width: width * 0.53,
                   height: height * 0.35,

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,47 +10,48 @@ import {
   Dimensions,
   StyleSheet,
 } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { ChevronLeftIcon } from "react-native-heroicons/outline";
-import { HeartIcon } from "react-native-heroicons/solid";
+// import { useNavigation, useRoute } from "@react-navigation/native";
+// import { ChevronLeftIcon } from "react-native-heroicons/outline";
+// import { HeartIcon } from "react-native-heroicons/solid";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router, useGlobalSearchParams, useLocalSearchParams } from "expo-router";
 
 const { width, height } = Dimensions.get("window");
 const ios = Platform.OS == "ios";
 const verticalMargin = ios ? 12 : 16;
 
 const SeeAll = () => {
-  const { params: results } = useRoute();
-  const navigation = useNavigation();
-  // const [results, setResults] = useState([]);
+  const params = useLocalSearchParams();
+  const { characters } = params; // Obtener los personajes de los parámetros
+  const parsedCharacters = JSON.parse(characters); 
+  console.log(characters, "characters")
+  const results = parsedCharacters;
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.header}>
         <TouchableOpacity
           style={[styles.background, { borderRadius: 20, padding: 10 }]}
-          onPress={() => navigation.goBack()}
+          onPress={() => router.back()}
         >
-          <ChevronLeftIcon size={28} strokeWidth={2.5} color="white" />
+          {/* <ChevronLeftIcon size={28} strokeWidth={2.5} color="white" /> */}
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => toggleFavourite(!isFavourite)}>
-          {/* <HeartIcon size={35} color={isFavourite ? "red" : "white"} /> */}
-        </TouchableOpacity>
+
       </SafeAreaView>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollViewContent}
       >
         <Text style={styles.resultsText}>Results ({results?.length})</Text>
-        <View style={styles.characterContainer}>
-          {results.map((item, index) => {
+        {/* <View style={styles.characterContainer}>
+          {results?.map((item, index) => {
             return (
               <TouchableWithoutFeedback
                 key={index}
-                onPress={() =>
-                  item.name
-                    ? navigation.push("Person", item)
-                    : navigation.push("Movie", item)
-                }
+              // onPress={() =>
+              //   item.name
+              //     ? navigation.push("Person", item)
+              //     : navigation.push("Movie", item)
+              // }
               >
                 <View style={styles.characterItem}>
                   <Image
@@ -63,14 +64,14 @@ const SeeAll = () => {
                         ? `${item.name.slice(0, 22)}...`
                         : item.name
                       : item.title.length > 22
-                      ? `${item.title.slice(0, 22)}...`
-                      : item.title}
+                        ? `${item.title.slice(0, 22)}...`
+                        : item.title}
                   </Text>
                 </View>
               </TouchableWithoutFeedback>
             );
           })}
-        </View>
+        </View> */}
       </ScrollView>
     </View>
   );
